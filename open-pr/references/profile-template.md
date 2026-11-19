@@ -1,7 +1,7 @@
 # open-pr profile — <project name>
 
 <!--
-  Project profile for the open-pr skill. Location: .claude/open-pr.md at the repository root.
+  Project profile for the open-pr skill. Location: .agents/open-pr.md at the repository root.
   The open-pr-setup skill writes this file. Edit it by hand when the project changes.
   Never put secret values here. Name the secret files only.
   Delete a section that does not apply (for example "iOS" in a web-only project).

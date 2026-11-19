@@ -1,6 +1,6 @@
 ---
 name: open-pr
-description: Create a pull request and attach real screenshots or a short recording of the changed screens. Use this skill whenever the user asks to create, open or send a PR ("open a PR", "create a pull request", "send this for review", "PR 올려줘", "PR 만들어줘") or to add screenshots or screen recordings to an existing PR. Reads the project profile (.claude/open-pr.md) written by the open-pr-setup skill, analyzes the diff, captures the changed screens from an Android emulator, iOS simulator or browser, verifies every capture visually, writes the body in the project's PR format, previews it with GitHub's renderer, asks for confirmation, then runs `gh pr create --attach` through scripts/submit.mjs. Not for commit-only requests or PR review/merge.
+description: Create a pull request and attach real screenshots or a short recording of the changed screens. Use this skill whenever the user asks to create, open or send a PR ("open a PR", "create a pull request", "send this for review", "PR 올려줘", "PR 만들어줘") or to add screenshots or screen recordings to an existing PR. Reads the project profile (.agents/open-pr.md) written by the open-pr-setup skill, analyzes the diff, captures the changed screens from an Android emulator, iOS simulator or browser, verifies every capture visually, writes the body in the project's PR format, previews it with GitHub's renderer, asks for confirmation, then runs `gh pr create --attach` through scripts/submit.mjs. Not for commit-only requests or PR review/merge.
 ---
 
 # open-pr — open a PR, with the changed screens attached
@@ -13,12 +13,22 @@ So two parts of this skill need your judgment: **what to show**, and **opening e
 
 ## 0. Load the project profile
 
-Read `.claude/open-pr.md` at the repository root. It holds the project facts this skill needs:
+Read `.agents/open-pr.md` at the repository root. If it is not there, try `.claude/open-pr.md`. It holds the project facts this skill needs:
 base branch rules, title convention, body sections, verify commands, platforms, capture commands, pitfalls and sensitive files.
 
 - **No profile?** Run the `open-pr-setup` skill first, then come back. If the user wants to skip setup, use the defaults in `references/profile-template.md` and tell the user which defaults you used.
 - **Profile out of date?** (a command fails, a path moved) Fix the capture, then propose the profile change to the user.
-- Also obey the repository's own agent rules (`AGENTS.md`, `CLAUDE.md`). They win over this skill.
+- Also obey the repository's own agent rules (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md` and similar). They win over this skill.
+
+## Tool names
+
+This skill works in any agent that supports Agent Skills (Codex, Claude Code, Antigravity, OpenCode, Devin and others). It names actions, not tools:
+
+- **Ask the user**: use your agent's question tool if it has one. Otherwise ask in a message and wait for the answer.
+- **Open an image**: use your agent's file or image viewer so that you see the pixels. A file listing is not enough.
+- **Run a command**: use your shell tool.
+
+If your agent cannot see images, tell the user. Then ask the user to check the captures before step 7.
 
 ## Flow
 
@@ -36,7 +46,7 @@ runs/open-pr/feat-adaptive-banner/
                                          result.json   PR number, missing attachments
 ```
 
-`S=<skills dir>/open-pr/scripts`. Use the path where this skill is installed (for example `.claude/skills/open-pr/scripts` or `~/.claude/skills/open-pr/scripts`).
+`S=<folder of this SKILL.md>/scripts`. Use the path where this skill is installed, for example `.agents/skills/open-pr/scripts`, `~/.agents/skills/open-pr/scripts` or `.claude/skills/open-pr/scripts`.
 
 ## 1. Status
 
@@ -85,7 +95,7 @@ Use the profile's build, install, launch and capture commands. `references/captu
 
 ## 5. Verify — look before you upload
 
-Open **every** `media/*.png` and every video frame sheet in `check/` with the Read tool. You cannot play a video, so read its frames.
+Open **every** `media/*.png` and every video frame sheet in `check/` with your image viewer. You cannot play a video, so look at its frames.
 
 - Does the image show the change the summary describes?
 - Is it free of loading spinners, empty screens, error overlays and login gates?

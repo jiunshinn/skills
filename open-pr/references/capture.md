@@ -1,6 +1,6 @@
 # Capture reference — Android emulator · iOS simulator · web
 
-Generic commands. The project profile (`.claude/open-pr.md`) gives the real module paths, IDs, launch arguments and pitfalls. When the two differ, the profile wins.
+Generic commands. The project profile (`.agents/open-pr.md`) gives the real module paths, IDs, launch arguments and pitfalls. When the two differ, the profile wins.
 
 ## Common rules
 
